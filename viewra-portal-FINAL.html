@@ -1,0 +1,1262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Viewra Studio — Inquiry</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  :root {
+    --cream: #F5F0E8;
+    --cream2: #EDE8DF;
+    --charcoal: #2C2C2C;
+    --charcoal2: #3D3D3D;
+    --mid: #6B6B6B;
+    --light: #9A9A9A;
+    --border: #D8D2C8;
+    --white: #FDFBF7;
+    --accent: #2C2C2C;
+  }
+
+  body {
+    background: var(--cream);
+    color: var(--charcoal);
+    font-family: 'Georgia', serif;
+    min-height: 100vh;
+  }
+
+  /* ─── CLIENT FORM PAGE ─── */
+  #page-form {
+    display: block;
+    min-height: 100vh;
+  }
+
+  .form-nav {
+    padding: 28px 48px;
+    border-bottom: 1px solid var(--border);
+    background: var(--white);
+  }
+
+  .form-nav .logo {
+    font-size: 16px;
+    letter-spacing: 5px;
+    text-transform: uppercase;
+    color: var(--charcoal);
+  }
+
+  .form-nav .tagline {
+    font-size: 11px;
+    letter-spacing: 2px;
+    color: var(--light);
+    font-family: 'Arial', sans-serif;
+    margin-top: 3px;
+  }
+
+  .form-body {
+    max-width: 560px;
+    margin: 64px auto;
+    padding: 0 24px 80px;
+  }
+
+  .form-intro {
+    margin-bottom: 48px;
+  }
+
+  .form-intro h1 {
+    font-size: 32px;
+    font-weight: normal;
+    color: var(--charcoal);
+    line-height: 1.3;
+    margin-bottom: 14px;
+  }
+
+  .form-intro p {
+    font-size: 14px;
+    color: var(--mid);
+    line-height: 1.8;
+    font-family: 'Arial', sans-serif;
+  }
+
+  .toggle-row {
+    display: flex;
+    gap: 0;
+    margin-bottom: 36px;
+    border: 1px solid var(--border);
+    background: var(--cream2);
+  }
+
+  .toggle-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background: transparent;
+    font-size: 11px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    font-family: 'Arial', sans-serif;
+    color: var(--light);
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+
+  .toggle-btn.active {
+    background: var(--charcoal);
+    color: var(--white);
+  }
+
+  .form-section { display: none; }
+  .form-section.active { display: block; }
+
+  .field {
+    margin-bottom: 28px;
+  }
+
+  .field label {
+    display: block;
+    font-size: 10px;
+    letter-spacing: 3px;
+    color: var(--light);
+    margin-bottom: 10px;
+    font-family: 'Arial', sans-serif;
+    text-transform: uppercase;
+  }
+
+  .field input,
+  .field select,
+  .field textarea {
+    width: 100%;
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 0;
+    color: var(--charcoal);
+    font-size: 14px;
+    padding: 13px 16px;
+    font-family: 'Georgia', serif;
+    outline: none;
+    transition: border-color 0.2s;
+    appearance: none;
+  }
+
+  .field input:focus,
+  .field select:focus,
+  .field textarea:focus {
+    border-color: var(--charcoal);
+  }
+
+  .field textarea {
+    resize: none;
+    height: 130px;
+    line-height: 1.6;
+  }
+
+  .field select option { background: var(--white); }
+
+  .submit-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--charcoal);
+    color: var(--white);
+    border: none;
+    font-size: 11px;
+    letter-spacing: 4px;
+    cursor: pointer;
+    font-family: 'Arial', sans-serif;
+    text-transform: uppercase;
+    margin-top: 8px;
+    transition: background 0.2s;
+  }
+
+  .submit-btn:hover { background: var(--charcoal2); }
+
+  .success-box {
+    display: none;
+    text-align: center;
+    padding: 64px 24px;
+    background: var(--white);
+    border: 1px solid var(--border);
+  }
+
+  .success-box h2 {
+    font-size: 26px;
+    font-weight: normal;
+    margin-bottom: 14px;
+    color: var(--charcoal);
+  }
+
+  .success-box p {
+    color: var(--mid);
+    font-size: 14px;
+    font-family: 'Arial', sans-serif;
+    line-height: 1.8;
+  }
+
+  .error-msg {
+    color: #c0392b;
+    font-size: 12px;
+    font-family: 'Arial', sans-serif;
+    margin-top: 6px;
+    display: none;
+  }
+
+  /* ─── DASHBOARD PAGE ─── */
+  #page-dashboard { display: none; min-height: 100vh; }
+
+  /* Password gate */
+  #pw-gate {
+    max-width: 400px;
+    margin: 120px auto;
+    padding: 0 24px;
+    text-align: center;
+  }
+
+  #pw-gate h2 {
+    font-size: 24px;
+    font-weight: normal;
+    margin-bottom: 8px;
+  }
+
+  #pw-gate p {
+    color: var(--mid);
+    font-size: 13px;
+    font-family: 'Arial', sans-serif;
+    margin-bottom: 32px;
+  }
+
+  #pw-gate input {
+    width: 100%;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    background: var(--white);
+    font-size: 14px;
+    font-family: 'Georgia', serif;
+    outline: none;
+    margin-bottom: 12px;
+    text-align: center;
+    letter-spacing: 4px;
+    color: var(--charcoal);
+  }
+
+  #pw-gate input:focus { border-color: var(--charcoal); }
+
+  #pw-gate button {
+    width: 100%;
+    padding: 14px;
+    background: var(--charcoal);
+    color: var(--white);
+    border: none;
+    font-size: 11px;
+    letter-spacing: 3px;
+    cursor: pointer;
+    font-family: 'Arial', sans-serif;
+  }
+
+  #pw-error {
+    color: #c0392b;
+    font-size: 12px;
+    font-family: 'Arial', sans-serif;
+    margin-top: 10px;
+    display: none;
+  }
+
+  /* Dashboard main */
+  #dash-main { display: none; }
+
+  .dash-nav {
+    padding: 24px 40px;
+    border-bottom: 1px solid var(--border);
+    background: var(--white);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .dash-nav .logo {
+    font-size: 15px;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+  }
+
+  .dash-nav .logo span {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--light);
+    display: block;
+    font-family: 'Arial', sans-serif;
+    margin-top: 2px;
+  }
+
+  .logout-btn {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--mid);
+    padding: 7px 16px;
+    font-size: 10px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    font-family: 'Arial', sans-serif;
+  }
+
+  .logout-btn:hover { border-color: var(--charcoal); color: var(--charcoal); }
+
+  .dash-content { padding: 36px 40px; }
+
+  .stats-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 36px;
+  }
+
+  .stat-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    padding: 24px;
+  }
+
+  .stat-card .num {
+    font-size: 40px;
+    font-weight: normal;
+    color: var(--charcoal);
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+
+  .stat-card .lbl {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--light);
+    font-family: 'Arial', sans-serif;
+    text-transform: uppercase;
+  }
+
+  .filters {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .f-btn {
+    padding: 7px 16px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--light);
+    font-size: 10px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    font-family: 'Arial', sans-serif;
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+
+  .f-btn.on, .f-btn:hover {
+    border-color: var(--charcoal);
+    color: var(--charcoal);
+    background: var(--cream2);
+  }
+
+  /* Client cards */
+  .clients-wrap {
+    display: grid;
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: 32px;
+  }
+
+  .client-card {
+    background: var(--white);
+    padding: 20px 24px;
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: background 0.15s;
+  }
+
+  .client-card:hover { background: var(--cream); }
+  .client-card.sel { background: var(--cream2); }
+
+  .cc-left h3 {
+    font-size: 15px;
+    font-weight: normal;
+    color: var(--charcoal);
+    margin-bottom: 4px;
+  }
+
+  .cc-left p {
+    font-size: 12px;
+    color: var(--mid);
+    font-family: 'Arial', sans-serif;
+  }
+
+  .cc-right { text-align: right; }
+
+  .badge {
+    display: inline-block;
+    font-size: 9px;
+    padding: 3px 10px;
+    letter-spacing: 2px;
+    font-family: 'Arial', sans-serif;
+    text-transform: uppercase;
+  }
+
+  .badge.new { background: var(--charcoal); color: var(--white); }
+  .badge.read { border: 1px solid var(--border); color: var(--light); }
+  .badge.escalated { background: #C8A96E; color: var(--white); margin-right: 6px; }
+
+  .cc-time {
+    font-size: 11px;
+    color: var(--light);
+    font-family: 'Arial', sans-serif;
+    margin-top: 5px;
+  }
+
+  /* Detail panel */
+  .detail-panel {
+    display: none;
+    background: var(--white);
+    border: 1px solid var(--border);
+    margin-bottom: 28px;
+  }
+
+  .detail-panel.open { display: block; }
+
+  .dp-head {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: var(--cream2);
+  }
+
+  .dp-head h3 { font-size: 17px; font-weight: normal; }
+  .dp-head p { font-size: 12px; color: var(--mid); font-family: 'Arial', sans-serif; margin-top: 3px; }
+
+  .dp-close {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--mid);
+    padding: 6px 14px;
+    font-size: 10px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    font-family: 'Arial', sans-serif;
+  }
+
+  .dp-close:hover { border-color: var(--charcoal); color: var(--charcoal); }
+
+  .msg-item {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .msg-item:last-child { border-bottom: none; }
+
+  .msg-top {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 10px;
+  }
+
+  .msg-country {
+    font-size: 10px;
+    letter-spacing: 2px;
+    color: var(--light);
+    font-family: 'Arial', sans-serif;
+    text-transform: uppercase;
+  }
+
+  .msg-time {
+    font-size: 11px;
+    color: var(--light);
+    font-family: 'Arial', sans-serif;
+  }
+
+  .msg-text {
+    font-size: 14px;
+    line-height: 1.7;
+    color: var(--charcoal);
+    margin-bottom: 8px;
+  }
+
+  .msg-email {
+    font-size: 11px;
+    color: var(--light);
+    font-family: 'Arial', sans-serif;
+  }
+
+  /* Empty */
+  .empty {
+    text-align: center;
+    padding: 72px 24px;
+    background: var(--white);
+    border: 1px solid var(--border);
+  }
+
+  .empty h3 { font-size: 20px; font-weight: normal; margin-bottom: 10px; }
+  .empty p { color: var(--mid); font-size: 13px; font-family: 'Arial', sans-serif; line-height: 1.8; }
+
+  /* Notif */
+  .notif {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--charcoal);
+    color: var(--white);
+    padding: 12px 20px;
+    font-size: 12px;
+    font-family: 'Arial', sans-serif;
+    letter-spacing: 1px;
+    opacity: 0;
+    transform: translateY(-20px);
+    transition: all 0.3s;
+    z-index: 999;
+  }
+
+  .notif.show { opacity: 1; transform: translateY(0); }
+
+  /* ─── IRIS ASSISTANT ─── */
+  #iris-toggle {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    width: 58px;
+    height: 58px;
+    border-radius: 50%;
+    background: var(--charcoal);
+    color: var(--white);
+    border: none;
+    cursor: pointer;
+    font-size: 22px;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: transform 0.2s;
+  }
+
+  #iris-toggle:hover { transform: scale(1.06); }
+
+  #iris-panel {
+    position: fixed;
+    bottom: 92px;
+    right: 24px;
+    width: 340px;
+    max-width: calc(100vw - 32px);
+    height: 460px;
+    max-height: calc(100vh - 140px);
+    background: var(--white);
+    border: 1px solid var(--border);
+    box-shadow: 0 10px 40px rgba(0,0,0,0.18);
+    display: none;
+    flex-direction: column;
+    z-index: 1000;
+  }
+
+  #iris-panel.open { display: flex; }
+
+  .iris-head {
+    padding: 18px 20px;
+    background: var(--charcoal);
+    color: var(--white);
+  }
+
+  .iris-head .name {
+    font-size: 13px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-family: 'Arial', sans-serif;
+  }
+
+  .iris-head .status {
+    font-size: 10px;
+    color: #C8A96E;
+    font-family: 'Arial', sans-serif;
+    margin-top: 3px;
+    letter-spacing: 1px;
+  }
+
+  .iris-body {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    background: var(--cream);
+  }
+
+  .iris-msg {
+    max-width: 85%;
+    padding: 10px 14px;
+    font-size: 13px;
+    line-height: 1.6;
+    font-family: 'Arial', sans-serif;
+  }
+
+  .iris-msg.bot {
+    background: var(--white);
+    border: 1px solid var(--border);
+    color: var(--charcoal);
+    align-self: flex-start;
+  }
+
+  .iris-msg.user {
+    background: var(--charcoal);
+    color: var(--white);
+    align-self: flex-end;
+  }
+
+  .iris-input-row {
+    display: flex;
+    border-top: 1px solid var(--border);
+    background: var(--white);
+  }
+
+  .iris-input-row input {
+    flex: 1;
+    border: none;
+    padding: 14px 16px;
+    font-size: 13px;
+    font-family: 'Arial', sans-serif;
+    outline: none;
+    background: transparent;
+    color: var(--charcoal);
+  }
+
+  .iris-input-row button {
+    border: none;
+    background: transparent;
+    color: var(--charcoal);
+    padding: 0 18px;
+    cursor: pointer;
+    font-size: 13px;
+    letter-spacing: 1px;
+    font-family: 'Arial', sans-serif;
+  }
+
+  .iris-input-row button:hover { color: var(--mid); }
+
+  @media (max-width: 600px) {
+    .form-nav, .dash-nav { padding: 20px; }
+    .dash-content { padding: 20px; }
+    .stats-grid { grid-template-columns: 1fr 1fr; }
+    .form-body { margin: 32px auto; }
+    #pw-gate { margin: 80px auto; }
+  }
+</style>
+</head>
+<body>
+
+<div class="notif" id="notif"></div>
+
+<!-- ══════════════════════════════════
+     CLIENT FORM PAGE
+══════════════════════════════════ -->
+<div id="page-form">
+  <div class="form-nav">
+    <div class="logo">VIEWRA STUDIO</div>
+    <div class="tagline">WALKTHROUGH VIDEO SERVICES</div>
+  </div>
+
+  <div class="form-body">
+    <div class="form-intro">
+      <h1>Send an inquiry</h1>
+      <p>Have a question about your walkthrough video? Fill in your details below. You can return and send more messages anytime using the returning client option.</p>
+    </div>
+
+    <div class="toggle-row">
+      <button class="toggle-btn active" onclick="switchForm('new', this)">NEW INQUIRY</button>
+      <button class="toggle-btn" onclick="switchForm('return', this)">RETURNING CLIENT</button>
+    </div>
+
+    <!-- NEW CLIENT -->
+    <div class="form-section active" id="section-new">
+      <div id="new-fields">
+        <div class="field">
+          <label>Full Name</label>
+          <input type="text" id="n-name" placeholder="Your full name">
+        </div>
+        <div class="field">
+          <label>Email Address</label>
+          <input type="email" id="n-email" placeholder="your@email.com">
+        </div>
+        <div class="field">
+          <label>Property Name</label>
+          <input type="text" id="n-property" placeholder="e.g. Rooftop Studio, Bhubaneswar">
+        </div>
+        <div class="field">
+          <label>Country</label>
+          <select id="n-country">
+            <option value="">Select your country</option>
+            <option>India</option>
+            <option>United Arab Emirates</option>
+            <option>United Kingdom</option>
+            <option>United States</option>
+            <option>Australia</option>
+            <option>Canada</option>
+            <option>Singapore</option>
+            <option>Other</option>
+          </select>
+        </div>
+        <div class="field">
+          <label>Your Message</label>
+          <textarea id="n-msg" placeholder="Ask anything — about your video, pricing, delivery, or the process..."></textarea>
+        </div>
+        <div class="error-msg" id="new-err">Please fill in all fields before sending.</div>
+        <button class="submit-btn" onclick="submitNew()">SEND INQUIRY</button>
+      </div>
+      <div class="success-box" id="new-success">
+        <h2>Inquiry received.</h2>
+        <p>Thank you. We will respond within 24 hours.<br><br>To send another message, return to this link and use <strong>Returning Client</strong> — just your email and message.</p>
+        <p id="new-success-note" style="margin-top:18px; padding-top:18px; border-top:1px solid var(--border); font-style:italic;"></p>
+      </div>
+    </div>
+
+    <!-- RETURNING CLIENT -->
+    <div class="form-section" id="section-return">
+      <div id="return-fields">
+        <div class="field">
+          <label>Your Email</label>
+          <input type="email" id="r-email" placeholder="Same email you used before">
+        </div>
+        <div class="field">
+          <label>Your Message</label>
+          <textarea id="r-msg" placeholder="Type your follow-up question or message..."></textarea>
+        </div>
+        <div class="error-msg" id="ret-err">Please enter your email and message.</div>
+        <div class="error-msg" id="ret-notfound">We couldn't find your email. Please use New Inquiry.</div>
+        <button class="submit-btn" onclick="submitReturn()">SEND MESSAGE</button>
+      </div>
+      <div class="success-box" id="return-success">
+        <h2>Message sent.</h2>
+        <p>Your follow-up has been received and added to your inquiry thread. We will respond within 24 hours.</p>
+        <p id="return-success-note" style="margin-top:18px; padding-top:18px; border-top:1px solid var(--border); font-style:italic;"></p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- IRIS ASSISTANT -->
+  <button id="iris-toggle" onclick="toggleIris()">🦋</button>
+  <div id="iris-panel">
+    <div class="iris-head">
+      <div class="name">IRIS · VIEWRA STUDIO</div>
+      <div class="status">● TYPICALLY REPLIES INSTANTLY</div>
+    </div>
+    <div class="iris-body" id="iris-body"></div>
+    <div class="iris-input-row">
+      <input type="text" id="iris-input" placeholder="Ask about pricing, process, timelines..." onkeydown="if(event.key==='Enter')irisSend()">
+      <button onclick="irisSend()">SEND</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════
+     DASHBOARD PAGE
+══════════════════════════════════ -->
+<div id="page-dashboard">
+
+  <!-- Password Gate -->
+  <div id="pw-gate">
+    <h2>Dashboard Access</h2>
+    <p>Enter your password to view client inquiries</p>
+    <input type="password" id="pw-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPw()">
+    <button onclick="checkPw()">ENTER DASHBOARD</button>
+    <div id="pw-error">Incorrect password. Please try again.</div>
+  </div>
+
+  <!-- Dashboard Main -->
+  <div id="dash-main">
+    <div class="dash-nav">
+      <div class="logo">
+        VIEWRA STUDIO
+        <span>INQUIRY DASHBOARD</span>
+      </div>
+      <button class="logout-btn" onclick="logout()">SIGN OUT</button>
+    </div>
+
+    <div class="dash-content">
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="num" id="s-total">0</div>
+          <div class="lbl">Total Inquiries</div>
+        </div>
+        <div class="stat-card">
+          <div class="num" id="s-clients">0</div>
+          <div class="lbl">Clients</div>
+        </div>
+        <div class="stat-card">
+          <div class="num" id="s-unread">0</div>
+          <div class="lbl">Unread</div>
+        </div>
+      </div>
+
+      <div class="filters">
+        <button class="f-btn on" onclick="setFilter('all',this)">ALL</button>
+        <button class="f-btn" onclick="setFilter('unread',this)">UNREAD</button>
+        <button class="f-btn" onclick="setFilter('India',this)">INDIA</button>
+        <button class="f-btn" onclick="setFilter('United Arab Emirates',this)">DUBAI</button>
+        <button class="f-btn" onclick="setFilter('United Kingdom',this)">UK</button>
+        <button class="f-btn" onclick="setFilter('United States',this)">USA</button>
+      </div>
+
+      <div class="detail-panel" id="detail-panel">
+        <div class="dp-head">
+          <div>
+            <h3 id="dp-name"></h3>
+            <p id="dp-prop"></p>
+          </div>
+          <button class="dp-close" onclick="closeDetail()">CLOSE</button>
+        </div>
+        <div id="dp-msgs"></div>
+      </div>
+
+      <div class="clients-wrap" id="clients-wrap"></div>
+      <div class="empty" id="empty-state" style="display:none">
+        <h3>No inquiries yet</h3>
+        <p>Share your inquiry link with clients.<br>Every message will appear here, organised by client.</p>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<script>
+  // ─── CONFIG ───
+  const DASH_PASSWORD = 'viewra2024';
+  const STORAGE_KEY   = 'viewra_v2_inquiries';
+
+  function irisQuickReply(text) {
+    const lower = text.toLowerCase();
+    const asksWhy = lower.includes('why') || lower.includes('justify') || lower.includes('worth it') || lower.includes('expensive');
+    const mentionsPrice = lower.includes('pric') || lower.includes('cost') || lower.includes('rate') || lower.includes('fee');
+    if (asksWhy && mentionsPrice) {
+      return "Quick note from Iris: the pricing covers a fully custom video — filming direction, branded overlay, multiple revisions, and curated audio, all without a single call. The founder will personally follow up within 17 hours.";
+    }
+    let best = null, bestScore = 0;
+    IRIS_FAQ.forEach(item => {
+      const score = item.kw.filter(k => lower.includes(k)).length;
+      if (score > bestScore) { bestScore = score; best = item; }
+    });
+    if (best) return "Quick note from Iris: " + best.a;
+    return "";
+  }
+
+  // ─── IRIS ASSISTANT (chat widget) ───
+  const IRIS_STORAGE_KEY = 'viewra_v2_inquiries';
+  const IRIS_ALERT_EMAIL = 'viewrastudio@gmail.com';
+
+  const IRIS_FAQ = [
+    { kw: ['price','pricing','cost','how much','rate','fee','budget'],
+      a: "Here's our pricing — Free sample video to start. $150 Starter: 60 seconds, 3 rooms, one revision, 36-hour delivery. $300 Full: 90 seconds, 5 rooms, branded overlay in your fonts and colours, booking or WhatsApp CTA, three revisions, curated audio, 36-hour delivery. $75 per change after delivery. Want me to note your interest for the founder?" },
+    { kw: ['sample','free video','demo','trial'],
+      a: "Yes — we offer a free sample video so you can see the quality before committing to anything paid. Just send your property details through the inquiry form and we'll get started." },
+    { kw: ['process','how does it work','how it works','what happens','steps','start'],
+      a: "It's simple and fully async — no calls needed. You share details about your space, we send a free sample to show you the quality, then once you're happy we move to your custom video." },
+    { kw: ['how long','turnaround','delivery time','when will i get','timeline','days'],
+      a: "Delivery takes 5 days once we begin your custom video." },
+    { kw: ['revision','change','edit after','update video'],
+      a: "The $300 package includes three revisions. Additional changes after delivery are $75 each." },
+    { kw: ['call','zoom','meeting','phone','talk live'],
+      a: "We work fully async — no calls or meetings needed. Everything is handled over email, on your own schedule." },
+    { kw: ['contract','own','rights','ownership','payment terms','invoice'],
+      a: "We'll share full contract and payment details — including ownership terms — once you're ready to move forward with your paid video. Everything is handled over email — no calls needed." }
+  ];
+
+  const IRIS_PERSONAL = ['are you a','male or female','your gender','are you real','are you human','are you a bot','are you ai','are you a robot','how old are you','where do you live','are you single','your age'];
+
+  let irisHistory = [];
+  let irisState = 'chat'; // 'chat' | 'awaiting_email'
+  let irisPersonalCount = 0;
+  let irisPendingQuestion = '';
+  let irisGreeted = false;
+
+  function toggleIris() {
+    const panel = document.getElementById('iris-panel');
+    panel.classList.toggle('open');
+    if (panel.classList.contains('open') && !irisGreeted) {
+      irisGreeted = true;
+      irisAdd('bot', "Hi, I'm Iris from Viewra Studio 🦋 — happy to answer anything about pricing, process, or timelines. What would you like to know?");
+    }
+  }
+
+  function irisAdd(who, text) {
+    irisHistory.push({ who, text });
+    const body = document.getElementById('iris-body');
+    const div = document.createElement('div');
+    div.className = 'iris-msg ' + who;
+    div.textContent = text;
+    body.appendChild(div);
+    body.scrollTop = body.scrollHeight;
+  }
+
+  function irisSend() {
+    const input = document.getElementById('iris-input');
+    const text = input.value.trim();
+    if (!text) return;
+    input.value = '';
+    irisAdd('user', text);
+
+    if (irisState === 'awaiting_email') {
+      handleIrisEmailCapture(text);
+      return;
+    }
+
+    const lower = text.toLowerCase();
+
+    // "why" objection about pricing — check before generic FAQ matching
+    const asksWhy = lower.includes('why') || lower.includes('justify') || lower.includes('worth it') || lower.includes('expensive');
+    const mentionsPrice = lower.includes('pric') || lower.includes('cost') || lower.includes('rate') || lower.includes('fee');
+    if (asksWhy && mentionsPrice) {
+      irisAdd('bot', "Fair question — the pricing covers a fully custom video for your space: filming direction, branded overlay in your colors and fonts, multiple revisions, and curated audio, all without a single call needed. It's built to make your space feel bookable, not just filmed. Want me to flag this for the founder if you'd like more detail?");
+      return;
+    }
+
+    // personal/identity questions
+    if (IRIS_PERSONAL.some(p => lower.includes(p))) {
+      irisPersonalCount++;
+      if (irisPersonalCount >= 3) {
+        irisEscalate(text);
+      } else {
+        irisAdd('bot', "I'm here to help with anything about your video — pricing, process, or timelines! What would you like to know?");
+      }
+      return;
+    }
+
+    // FAQ match
+    let best = null, bestScore = 0;
+    IRIS_FAQ.forEach(item => {
+      const score = item.kw.filter(k => lower.includes(k)).length;
+      if (score > bestScore) { bestScore = score; best = item; }
+    });
+
+    if (best) {
+      irisAdd('bot', best.a);
+    } else {
+      irisEscalate(text);
+    }
+  }
+
+  function irisEscalate(question) {
+    irisPendingQuestion = question;
+    irisState = 'awaiting_email';
+    irisAdd('bot', "That's a great question — I want to make sure you get accurate, detailed information, so I'm forwarding this to our founder directly. Could you share your email so she can follow up within 17 hours. Your patience is genuinely appreciated!");
+  }
+
+  function handleIrisEmailCapture(emailText) {
+    const emailMatch = emailText.match(/[^\s@]+@[^\s@]+\.[^\s@]+/);
+    if (!emailMatch) {
+      irisAdd('bot', "That doesn't look like a valid email — could you double check and resend it?");
+      return;
+    }
+    const email = emailMatch[0];
+
+    // log to dashboard storage
+    try {
+      const data = JSON.parse(localStorage.getItem(IRIS_STORAGE_KEY)) || [];
+      data.push({
+        id: Date.now(),
+        name: 'Website Visitor (via Iris)',
+        email: email,
+        property: 'Not specified',
+        country: 'Unknown',
+        message: '[IRIS COULD NOT ANSWER] ' + irisPendingQuestion,
+        time: new Date().toISOString(),
+        read: false,
+        escalated: true
+      });
+      localStorage.setItem(IRIS_STORAGE_KEY, JSON.stringify(data));
+    } catch(e) {}
+
+    // email alert (requires one-time confirmation click from formsubmit.co on first use)
+    try {
+      fetch('https://formsubmit.co/ajax/' + IRIS_ALERT_EMAIL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+        body: JSON.stringify({
+          _subject: 'Iris escalation — question needs your reply',
+          visitor_email: email,
+          question: irisPendingQuestion
+        })
+      });
+    } catch(e) {}
+
+    irisAdd('bot', "Thank you — I've forwarded your question along with your email. Our founder will personally follow up within 17 hours. Is there anything else I can help with in the meantime?");
+    irisState = 'chat';
+    irisPendingQuestion = '';
+  }
+
+  // ─── ROUTING ───
+  window.addEventListener('DOMContentLoaded', () => {
+    const hash = window.location.hash;
+    if (hash === '#dashboard') {
+      document.getElementById('page-form').style.display = 'none';
+      document.getElementById('page-dashboard').style.display = 'block';
+    }
+  });
+
+  // ─── NOTIF ───
+  function notify(msg) {
+    const el = document.getElementById('notif');
+    el.textContent = msg;
+    el.classList.add('show');
+    setTimeout(() => el.classList.remove('show'), 3000);
+  }
+
+  // ─── STORAGE ───
+  function load() {
+    try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
+    catch(e) { return []; }
+  }
+
+  function save(data) {
+    try { localStorage.setItem(STORAGE_KEY, JSON.stringify(data)); }
+    catch(e) {}
+  }
+
+  // ─── FORM TOGGLE ───
+  function switchForm(type, btn) {
+    document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('section-' + type).classList.add('active');
+  }
+
+  // ─── NEW INQUIRY ───
+  function submitNew() {
+    const name     = document.getElementById('n-name').value.trim();
+    const email    = document.getElementById('n-email').value.trim();
+    const property = document.getElementById('n-property').value.trim();
+    const country  = document.getElementById('n-country').value;
+    const msg      = document.getElementById('n-msg').value.trim();
+
+    document.getElementById('new-err').style.display = 'none';
+
+    if (!name || !email || !property || !country || !msg) {
+      document.getElementById('new-err').style.display = 'block';
+      return;
+    }
+
+    const data = load();
+    data.push({
+      id: Date.now(),
+      name, email, property, country,
+      message: msg,
+      time: new Date().toISOString(),
+      read: false
+    });
+    save(data);
+
+    document.getElementById('new-fields').style.display = 'none';
+    document.getElementById('new-success').style.display = 'block';
+    const newNote = irisQuickReply(msg);
+    const newNoteEl = document.getElementById('new-success-note');
+    newNoteEl.textContent = newNote;
+    newNoteEl.style.display = newNote ? 'block' : 'none';
+  }
+
+  // ─── RETURNING CLIENT ───
+  function submitReturn() {
+    const email = document.getElementById('r-email').value.trim();
+    const msg   = document.getElementById('r-msg').value.trim();
+
+    document.getElementById('ret-err').style.display = 'none';
+    document.getElementById('ret-notfound').style.display = 'none';
+
+    if (!email || !msg) {
+      document.getElementById('ret-err').style.display = 'block';
+      return;
+    }
+
+    const data    = load();
+    const prev    = data.find(i => i.email.toLowerCase() === email.toLowerCase());
+
+    if (!prev) {
+      document.getElementById('ret-notfound').style.display = 'block';
+      return;
+    }
+
+    data.push({
+      id: Date.now(),
+      name: prev.name,
+      email: prev.email,
+      property: prev.property,
+      country: prev.country,
+      message: msg,
+      time: new Date().toISOString(),
+      read: false
+    });
+    save(data);
+
+    document.getElementById('return-fields').style.display = 'none';
+    document.getElementById('return-success').style.display = 'block';
+    const retNote = irisQuickReply(msg);
+    const retNoteEl = document.getElementById('return-success-note');
+    retNoteEl.textContent = retNote;
+    retNoteEl.style.display = retNote ? 'block' : 'none';
+  }
+
+  // ─── PASSWORD ───
+  function checkPw() {
+    const val = document.getElementById('pw-input').value;
+    document.getElementById('pw-error').style.display = 'none';
+    if (val === DASH_PASSWORD) {
+      document.getElementById('pw-gate').style.display = 'none';
+      document.getElementById('dash-main').style.display = 'block';
+      renderDash();
+    } else {
+      document.getElementById('pw-error').style.display = 'block';
+    }
+  }
+
+  function logout() {
+    document.getElementById('pw-gate').style.display = 'block';
+    document.getElementById('dash-main').style.display = 'none';
+    document.getElementById('pw-input').value = '';
+  }
+
+  // ─── DASHBOARD ───
+  let activeFilter = 'all';
+  let selectedKey  = null;
+
+  function setFilter(f, btn) {
+    activeFilter = f;
+    document.querySelectorAll('.f-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    closeDetail();
+    renderDash();
+  }
+
+  function groupClients(data) {
+    const map = {};
+    data.forEach(i => {
+      const key = i.email + '||' + i.property;
+      if (!map[key]) {
+        map[key] = {
+          key, name: i.name, email: i.email,
+          property: i.property, country: i.country,
+          msgs: [], hasUnread: false, hasEscalated: false, lastTime: i.time
+        };
+      }
+      map[key].msgs.push(i);
+      if (!i.read) map[key].hasUnread = true;
+      if (i.escalated && !i.read) map[key].hasEscalated = true;
+      if (i.time > map[key].lastTime) map[key].lastTime = i.time;
+    });
+    return Object.values(map).sort((a,b) => new Date(b.lastTime) - new Date(a.lastTime));
+  }
+
+  function renderDash() {
+    const data    = load();
+    const clients = groupClients(data);
+
+    document.getElementById('s-total').textContent   = data.length;
+    document.getElementById('s-clients').textContent = clients.length;
+    document.getElementById('s-unread').textContent  = data.filter(i => !i.read).length;
+
+    let list = clients;
+    if (activeFilter === 'unread') list = clients.filter(c => c.hasUnread);
+    else if (activeFilter !== 'all') list = clients.filter(c => c.country === activeFilter);
+
+    const wrap  = document.getElementById('clients-wrap');
+    const empty = document.getElementById('empty-state');
+
+    if (list.length === 0) {
+      wrap.style.display  = 'none';
+      empty.style.display = 'block';
+    } else {
+      wrap.style.display  = 'grid';
+      empty.style.display = 'none';
+      wrap.innerHTML = list.map(c => `
+        <div class="client-card ${selectedKey === c.key ? 'sel' : ''}"
+             onclick="openClient(${JSON.stringify(c.key)})">
+          <div class="cc-left">
+            <h3>${esc(c.name)}</h3>
+            <p>${esc(c.property)} &middot; ${esc(c.country)}</p>
+          </div>
+          <div class="cc-right">
+            ${c.hasEscalated ? '<span class="badge escalated">NEEDS REPLY</span>' : ''}
+            <span class="badge ${c.hasUnread ? 'new' : 'read'}">${c.hasUnread ? 'NEW' : 'READ'}</span>
+            <div class="cc-time">${fmtTime(c.lastTime)} &middot; ${c.msgs.length} msg${c.msgs.length > 1 ? 's' : ''}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+  }
+
+  function openClient(key) {
+    selectedKey = key;
+    const data    = load();
+    const clients = groupClients(data);
+    const client  = clients.find(c => c.key === key);
+    if (!client) return;
+
+    // mark read
+    data.forEach(i => {
+      if ((i.email + '||' + i.property) === key) i.read = true;
+    });
+    save(data);
+
+    document.getElementById('dp-name').textContent = client.name;
+    document.getElementById('dp-prop').textContent = client.property + ' · ' + client.country + ' · ' + client.email;
+    document.getElementById('dp-msgs').innerHTML = client.msgs
+      .sort((a,b) => new Date(a.time) - new Date(b.time))
+      .map(m => `
+        <div class="msg-item">
+          <div class="msg-top">
+            <span class="msg-country">${esc(m.country)}</span>
+            <span class="msg-time">${fmtTime(m.time)}</span>
+          </div>
+          <div class="msg-text">${esc(m.message)}</div>
+          <div class="msg-email">${esc(m.email)}</div>
+        </div>
+      `).join('');
+
+    document.getElementById('detail-panel').classList.add('open');
+    renderDash();
+  }
+
+  function closeDetail() {
+    selectedKey = null;
+    document.getElementById('detail-panel').classList.remove('open');
+  }
+
+  function fmtTime(iso) {
+    const d    = new Date(iso);
+    const diff = Date.now() - d;
+    const m    = Math.floor(diff / 60000);
+    const h    = Math.floor(diff / 3600000);
+    const day  = Math.floor(diff / 86400000);
+    if (m < 1)   return 'Just now';
+    if (m < 60)  return m + 'm ago';
+    if (h < 24)  return h + 'h ago';
+    if (day < 2) return 'Yesterday';
+    return d.toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  }
+
+  function esc(s) {
+    return String(s)
+      .replace(/&/g,'&amp;')
+      .replace(/</g,'&lt;')
+      .replace(/>/g,'&gt;')
+      .replace(/"/g,'&quot;');
+  }
+
+  // ─── DEMO DATA ───
+  (function seedDemo() {
+    if (load().length > 0) return;
+    save([
+      { id:1, name:'Arjun Sharma', email:'arjun@gmail.com', property:'Modern Rooftop Studio, Bhubaneswar', country:'India', message:'Hi, I saw your email and I am very interested in the free sample video. When can you start?', time: new Date(Date.now()-7200000).toISOString(), read:false },
+      { id:2, name:'Arjun Sharma', email:'arjun@gmail.com', property:'Modern Rooftop Studio, Bhubaneswar', country:'India', message:'Also — can you show both the rooftop and bedroom in the sample?', time: new Date(Date.now()-3600000).toISOString(), read:false },
+      { id:3, name:'Sarah Mitchell', email:'sarah@outlook.com', property:'Cosy Garden Flat, London', country:'United Kingdom', message:'Hello, I have 3 listings in London. Would you do a package deal for all three?', time: new Date(Date.now()-86400000).toISOString(), read:true }
+    ]);
+  })();
+</script>
+</body>
+</html>
