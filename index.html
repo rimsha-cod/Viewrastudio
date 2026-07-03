@@ -837,7 +837,7 @@
     const asksWhy = lower.includes('why') || lower.includes('justify') || lower.includes('worth it') || lower.includes('expensive');
     const mentionsPrice = lower.includes('pric') || lower.includes('cost') || lower.includes('rate') || lower.includes('fee');
     if (asksWhy && mentionsPrice) {
-      return "Quick note from Iris: the pricing covers a fully custom video — filming direction, branded overlay, multiple revisions, and curated audio, all without a single call. The founder will personally follow up within 17 hours.";
+      return "Quick note from Iris: the pricing covers a fully custom video — filming direction, branded overlay, multiple revisions, and curated audio, all without a single call. The founder will personally follow up within 24 hours.";
     }
     let best = null, bestScore = 0;
     IRIS_FAQ.forEach(item => {
@@ -946,13 +946,26 @@
   function irisEscalate(question) {
     irisPendingQuestion = question;
     irisState = 'awaiting_email';
-    irisAdd('bot', "That's a great question — I want to make sure you get accurate, detailed information, so I'm forwarding this to our founder directly. Could you share your email so she can follow up within 17 hours. Your patience is genuinely appreciated!");
+    irisAdd('bot', "That's a great question — I want to make sure you get accurate, detailed information, so I'm forwarding this to our founder directly. Could you share your email so she can follow up within 24 hours. Your patience is genuinely appreciated!");
   }
 
   function handleIrisEmailCapture(emailText) {
     const emailMatch = emailText.match(/[^\s@]+@[^\s@]+\.[^\s@]+/);
     if (!emailMatch) {
-      irisAdd('bot', "That doesn't look like a valid email — could you double check and resend it?");
+      // Not an email — maybe they're just asking another question instead.
+      // Try to answer it rather than getting stuck demanding an email.
+      const lower = emailText.toLowerCase();
+      let best = null, bestScore = 0;
+      IRIS_FAQ.forEach(item => {
+        const score = item.kw.filter(k => lower.includes(k)).length;
+        if (score > bestScore) { bestScore = score; best = item; }
+      });
+      if (best) {
+        irisState = 'chat';
+        irisAdd('bot', best.a);
+        return;
+      }
+      irisAdd('bot', "That doesn't look like a valid email — could you double check and resend it? Or feel free to just ask another question instead.");
       return;
     }
     const email = emailMatch[0];
@@ -987,7 +1000,7 @@
       });
     } catch(e) {}
 
-    irisAdd('bot', "Thank you — I've forwarded your question along with your email. Our founder will personally follow up within 17 hours. Is there anything else I can help with in the meantime?");
+    irisAdd('bot', "Thank you — I've forwarded your question along with your email. Our founder will personally follow up within 24 hours. Is there anything else I can help with in the meantime?");
     irisState = 'chat';
     irisPendingQuestion = '';
   }
@@ -1175,7 +1188,7 @@
       empty.style.display = 'none';
       wrap.innerHTML = list.map(c => `
         <div class="client-card ${selectedKey === c.key ? 'sel' : ''}"
-             onclick="openClient(${JSON.stringify(c.key)})">
+             data-key="${esc(c.key)}">
           <div class="cc-left">
             <h3>${esc(c.name)}</h3>
             <p>${esc(c.property)} &middot; ${esc(c.country)}</p>
@@ -1187,6 +1200,9 @@
           </div>
         </div>
       `).join('');
+      wrap.querySelectorAll('.client-card').forEach(card => {
+        card.addEventListener('click', () => openClient(card.getAttribute('data-key')));
+      });
     }
   }
 
