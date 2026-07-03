@@ -1,9 +1,10 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Viewra Studio — Inquiry</title>
+<title>Viewra Studio - Inquiry</title>
 <style>
   * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -26,7 +27,7 @@
     min-height: 100vh;
   }
 
-  /* ─── CLIENT FORM PAGE ─── */
+  /* --- CLIENT FORM PAGE --- */
   #page-form {
     display: block;
     min-height: 100vh;
@@ -199,7 +200,7 @@
     display: none;
   }
 
-  /* ─── DASHBOARD PAGE ─── */
+  /* --- DASHBOARD PAGE --- */
   #page-dashboard { display: none; min-height: 100vh; }
 
   /* Password gate */
@@ -518,7 +519,7 @@
 
   .notif.show { opacity: 1; transform: translateY(0); }
 
-  /* ─── IRIS ASSISTANT ─── */
+  /* --- IRIS ASSISTANT --- */
   #iris-toggle {
     position: fixed;
     bottom: 24px;
@@ -654,9 +655,9 @@
 
 <div class="notif" id="notif"></div>
 
-<!-- ══════════════════════════════════
+<!-- ==================================
      CLIENT FORM PAGE
-══════════════════════════════════ -->
+================================== -->
 <div id="page-form">
   <div class="form-nav">
     <div class="logo">VIEWRA STUDIO</div>
@@ -705,14 +706,14 @@
         </div>
         <div class="field">
           <label>Your Message</label>
-          <textarea id="n-msg" placeholder="Ask anything — about your video, pricing, delivery, or the process..."></textarea>
+          <textarea id="n-msg" placeholder="Ask anything - about your video, pricing, delivery, or the process..."></textarea>
         </div>
         <div class="error-msg" id="new-err">Please fill in all fields before sending.</div>
         <button class="submit-btn" onclick="submitNew()">SEND INQUIRY</button>
       </div>
       <div class="success-box" id="new-success">
         <h2>Inquiry received.</h2>
-        <p>Thank you. We will respond within 24 hours.<br><br>To send another message, return to this link and use <strong>Returning Client</strong> — just your email and message.</p>
+        <p>Thank you. We will respond within 24 hours.<br><br>To send another message, return to this link and use <strong>Returning Client</strong> - just your email and message.</p>
         <p id="new-success-note" style="margin-top:18px; padding-top:18px; border-top:1px solid var(--border); font-style:italic;"></p>
       </div>
     </div>
@@ -742,11 +743,11 @@
   </div>
 
   <!-- IRIS ASSISTANT -->
-  <button id="iris-toggle" onclick="toggleIris()">🦋</button>
+  <button id="iris-toggle" onclick="toggleIris()"></button>
   <div id="iris-panel">
     <div class="iris-head">
-      <div class="name">IRIS · VIEWRA STUDIO</div>
-      <div class="status">● TYPICALLY REPLIES INSTANTLY</div>
+      <div class="name">IRIS . VIEWRA STUDIO</div>
+      <div class="status">* TYPICALLY REPLIES INSTANTLY</div>
     </div>
     <div class="iris-body" id="iris-body"></div>
     <div class="iris-input-row">
@@ -756,16 +757,16 @@
   </div>
 </div>
 
-<!-- ══════════════════════════════════
+<!-- ==================================
      DASHBOARD PAGE
-══════════════════════════════════ -->
+================================== -->
 <div id="page-dashboard">
 
   <!-- Password Gate -->
   <div id="pw-gate">
     <h2>Dashboard Access</h2>
     <p>Enter your password to view client inquiries</p>
-    <input type="password" id="pw-input" placeholder="••••••••" onkeydown="if(event.key==='Enter')checkPw()">
+    <input type="password" id="pw-input" placeholder="--------" onkeydown="if(event.key==='Enter')checkPw()">
     <button onclick="checkPw()">ENTER DASHBOARD</button>
     <div id="pw-error">Incorrect password. Please try again.</div>
   </div>
@@ -828,16 +829,16 @@
 </div>
 
 <script>
-  // ─── CONFIG ───
+  // --- CONFIG ---
   const DASH_PASSWORD = 'viewra2024';
   const STORAGE_KEY   = 'viewra_v2_inquiries';
 
   function irisQuickReply(text) {
     const lower = text.toLowerCase();
     const asksWhy = lower.includes('why') || lower.includes('justify') || lower.includes('worth it') || lower.includes('expensive');
-    const mentionsPrice = lower.includes('pric') || lower.includes('cost') || lower.includes('rate') || lower.includes('fee');
+    const mentionsPrice = lower.includes('pric') || lower.includes('cost') || lower.includes('rate') || lower.includes('fee') || lower.includes('expensive');
     if (asksWhy && mentionsPrice) {
-      return "Quick note from Iris: the pricing covers a fully custom video — filming direction, branded overlay, multiple revisions, and curated audio, all without a single call. The founder will personally follow up within 24 hours.";
+      return "Quick note from Iris: the pricing covers a fully custom video - filming direction, branded overlay, multiple revisions, and curated audio, all without a single call. The founder will personally follow up within 24 hours.";
     }
     let best = null, bestScore = 0;
     IRIS_FAQ.forEach(item => {
@@ -848,25 +849,25 @@
     return "";
   }
 
-  // ─── IRIS ASSISTANT (chat widget) ───
+  // --- IRIS ASSISTANT (chat widget) ---
   const IRIS_STORAGE_KEY = 'viewra_v2_inquiries';
   const IRIS_ALERT_EMAIL = 'viewrastudio@gmail.com';
 
   const IRIS_FAQ = [
     { kw: ['price','pricing','cost','how much','rate','fee','budget'],
-      a: "Here's our pricing — Free sample video to start. $150 Starter: 60 seconds, 3 rooms, one revision, 36-hour delivery. $300 Full: 90 seconds, 5 rooms, branded overlay in your fonts and colours, booking or WhatsApp CTA, three revisions, curated audio, 36-hour delivery. $75 per change after delivery. Want me to note your interest for the founder?" },
+      a: "Here's our pricing - Free sample video to start. $150 Starter: 60 seconds, 3 rooms, one revision, 36-hour delivery. $300 Full: 90 seconds, 5 rooms, branded overlay in your fonts and colours, booking or WhatsApp CTA, three revisions, curated audio, 36-hour delivery. $75 per change after delivery. Want me to note your interest for the founder?" },
     { kw: ['sample','free video','demo','trial'],
-      a: "Yes — we offer a free sample video so you can see the quality before committing to anything paid. Just send your property details through the inquiry form and we'll get started." },
+      a: "Yes - we offer a free sample video so you can see the quality before committing to anything paid. Just send your property details through the inquiry form and we'll get started." },
     { kw: ['process','how does it work','how it works','what happens','steps','start'],
-      a: "It's simple and fully async — no calls needed. You share details about your space, we send a free sample to show you the quality, then once you're happy we move to your custom video." },
+      a: "It's simple and fully async - no calls needed. You share details about your space, we send a free sample to show you the quality, then once you're happy we move to your custom video." },
     { kw: ['how long','turnaround','delivery time','when will i get','timeline','days'],
       a: "Delivery takes 5 days once we begin your custom video." },
     { kw: ['revision','change','edit after','update video'],
       a: "The $300 package includes three revisions. Additional changes after delivery are $75 each." },
     { kw: ['call','zoom','meeting','phone','talk live'],
-      a: "We work fully async — no calls or meetings needed. Everything is handled over email, on your own schedule." },
+      a: "We work fully async - no calls or meetings needed. Everything is handled over email, on your own schedule." },
     { kw: ['contract','own','rights','ownership','payment terms','invoice'],
-      a: "We'll share full contract and payment details — including ownership terms — once you're ready to move forward with your paid video. Everything is handled over email — no calls needed." }
+      a: "We'll share full contract and payment details - including ownership terms - once you're ready to move forward with your paid video. Everything is handled over email - no calls needed." }
   ];
 
   const IRIS_PERSONAL = ['are you a','male or female','your gender','are you real','are you human','are you a bot','are you ai','are you a robot','how old are you','where do you live','are you single','your age'];
@@ -882,7 +883,7 @@
     panel.classList.toggle('open');
     if (panel.classList.contains('open') && !irisGreeted) {
       irisGreeted = true;
-      irisAdd('bot', "Hi, I'm Iris from Viewra Studio 🦋 — happy to answer anything about pricing, process, or timelines. What would you like to know?");
+      irisAdd('bot', "Hi, I'm Iris from Viewra Studio  - happy to answer anything about pricing, process, or timelines. What would you like to know?");
     }
   }
 
@@ -910,22 +911,28 @@
 
     const lower = text.toLowerCase();
 
-    // "why" objection about pricing — check before generic FAQ matching
-    const asksWhy = lower.includes('why') || lower.includes('justify') || lower.includes('worth it') || lower.includes('expensive');
-    const mentionsPrice = lower.includes('pric') || lower.includes('cost') || lower.includes('rate') || lower.includes('fee');
-    if (asksWhy && mentionsPrice) {
-      irisAdd('bot', "Fair question — the pricing covers a fully custom video for your space: filming direction, branded overlay in your colors and fonts, multiple revisions, and curated audio, all without a single call needed. It's built to make your space feel bookable, not just filmed. Want me to flag this for the founder if you'd like more detail?");
+    // simple greetings/small talk - don't escalate, just respond warmly
+    const greetings = ['hi','hii','hiii','hello','hey','heyy','yo','sup','good morning','good afternoon','good evening','how are you','whats up',"what's up"];
+    if (greetings.some(g => lower === g || lower.startsWith(g + ' ') || lower.startsWith(g + '!') || lower.startsWith(g + '?') || lower.startsWith(g + ','))) {
+      irisAdd('bot', "Hi there! I'm happy to help with anything about pricing, the process, or delivery timelines for your walkthrough video. What would you like to know?");
       return;
     }
 
-    // personal/identity questions
+    // "why" objection about pricing - check before generic FAQ matching
+    const asksWhy = lower.includes('why') || lower.includes('justify') || lower.includes('worth it') || lower.includes('expensive');
+    const mentionsPrice = lower.includes('pric') || lower.includes('cost') || lower.includes('rate') || lower.includes('fee') || lower.includes('expensive');
+
+    // broader decision/objection questions - "is it worth it", "should I go with this", etc.
+    const objectionPhrases = ['worth it','worth the price','worth the money','worth paying','should i go with','should i use','should i choose','should i pick','should i get','should i book','is this legit','is this legitimate','is it worth','not sure if','not convinced','hesitant about','should i go for','is it good'];
+    const isObjection = objectionPhrases.some(p => lower.includes(p)) || (asksWhy && mentionsPrice);
+    if (isObjection) {
+      irisAdd('bot', "Totally fair to want to be sure before deciding! Here's the honest picture: you get a professionally shot, branded walkthrough video built to make your space feel bookable - filming direction, multiple revisions, and curated audio included. And you can start with a completely free sample video before paying anything, so you can judge the quality yourself with zero risk. No pressure either way - take your time!");
+      return;
+    }
+
+    // personal/identity questions - always redirect kindly, no need to escalate these
     if (IRIS_PERSONAL.some(p => lower.includes(p))) {
-      irisPersonalCount++;
-      if (irisPersonalCount >= 3) {
-        irisEscalate(text);
-      } else {
-        irisAdd('bot', "I'm here to help with anything about your video — pricing, process, or timelines! What would you like to know?");
-      }
+      irisAdd('bot', "I'm Iris, Viewra Studio's assistant - happy to help with anything about your video: pricing, process, or timelines! What would you like to know?");
       return;
     }
 
@@ -946,13 +953,13 @@
   function irisEscalate(question) {
     irisPendingQuestion = question;
     irisState = 'awaiting_email';
-    irisAdd('bot', "That's a great question — I want to make sure you get accurate, detailed information, so I'm forwarding this to our founder directly. Could you share your email so she can follow up within 24 hours. Your patience is genuinely appreciated!");
+    irisAdd('bot', "That's a great question - I want to make sure you get accurate, detailed information, so I'm forwarding this to our founder directly. Could you share your email so she can follow up within 24 hours. Your patience is genuinely appreciated!");
   }
 
   function handleIrisEmailCapture(emailText) {
     const emailMatch = emailText.match(/[^\s@]+@[^\s@]+\.[^\s@]+/);
     if (!emailMatch) {
-      // Not an email — maybe they're just asking another question instead.
+      // Not an email - maybe they're just asking another question instead.
       // Try to answer it rather than getting stuck demanding an email.
       const lower = emailText.toLowerCase();
       let best = null, bestScore = 0;
@@ -965,7 +972,7 @@
         irisAdd('bot', best.a);
         return;
       }
-      irisAdd('bot', "That doesn't look like a valid email — could you double check and resend it? Or feel free to just ask another question instead.");
+      irisAdd('bot', "That doesn't look like a valid email - could you double check and resend it? Or feel free to just ask another question instead.");
       return;
     }
     const email = emailMatch[0];
@@ -993,19 +1000,19 @@
         method: 'POST',
         headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
         body: JSON.stringify({
-          _subject: 'Iris escalation — question needs your reply',
+          _subject: 'Iris escalation - question needs your reply',
           visitor_email: email,
           question: irisPendingQuestion
         })
       });
     } catch(e) {}
 
-    irisAdd('bot', "Thank you — I've forwarded your question along with your email. Our founder will personally follow up within 24 hours. Is there anything else I can help with in the meantime?");
+    irisAdd('bot', "Thank you - I've forwarded your question along with your email. Our founder will personally follow up within 24 hours. Is there anything else I can help with in the meantime?");
     irisState = 'chat';
     irisPendingQuestion = '';
   }
 
-  // ─── ROUTING ───
+  // --- ROUTING ---
   window.addEventListener('DOMContentLoaded', () => {
     const hash = window.location.hash;
     if (hash === '#dashboard') {
@@ -1014,7 +1021,7 @@
     }
   });
 
-  // ─── NOTIF ───
+  // --- NOTIF ---
   function notify(msg) {
     const el = document.getElementById('notif');
     el.textContent = msg;
@@ -1022,7 +1029,7 @@
     setTimeout(() => el.classList.remove('show'), 3000);
   }
 
-  // ─── STORAGE ───
+  // --- STORAGE ---
   function load() {
     try { return JSON.parse(localStorage.getItem(STORAGE_KEY)) || []; }
     catch(e) { return []; }
@@ -1033,7 +1040,7 @@
     catch(e) {}
   }
 
-  // ─── FORM TOGGLE ───
+  // --- FORM TOGGLE ---
   function switchForm(type, btn) {
     document.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
     document.querySelectorAll('.form-section').forEach(s => s.classList.remove('active'));
@@ -1041,7 +1048,7 @@
     document.getElementById('section-' + type).classList.add('active');
   }
 
-  // ─── NEW INQUIRY ───
+  // --- NEW INQUIRY ---
   function submitNew() {
     const name     = document.getElementById('n-name').value.trim();
     const email    = document.getElementById('n-email').value.trim();
@@ -1074,7 +1081,7 @@
     newNoteEl.style.display = newNote ? 'block' : 'none';
   }
 
-  // ─── RETURNING CLIENT ───
+  // --- RETURNING CLIENT ---
   function submitReturn() {
     const email = document.getElementById('r-email').value.trim();
     const msg   = document.getElementById('r-msg').value.trim();
@@ -1115,7 +1122,7 @@
     retNoteEl.style.display = retNote ? 'block' : 'none';
   }
 
-  // ─── PASSWORD ───
+  // --- PASSWORD ---
   function checkPw() {
     const val = document.getElementById('pw-input').value;
     document.getElementById('pw-error').style.display = 'none';
@@ -1134,7 +1141,7 @@
     document.getElementById('pw-input').value = '';
   }
 
-  // ─── DASHBOARD ───
+  // --- DASHBOARD ---
   let activeFilter = 'all';
   let selectedKey  = null;
 
@@ -1220,7 +1227,7 @@
     save(data);
 
     document.getElementById('dp-name').textContent = client.name;
-    document.getElementById('dp-prop').textContent = client.property + ' · ' + client.country + ' · ' + client.email;
+    document.getElementById('dp-prop').textContent = client.property + ' . ' + client.country + ' . ' + client.email;
     document.getElementById('dp-msgs').innerHTML = client.msgs
       .sort((a,b) => new Date(a.time) - new Date(b.time))
       .map(m => `
@@ -1264,12 +1271,12 @@
       .replace(/"/g,'&quot;');
   }
 
-  // ─── DEMO DATA ───
+  // --- DEMO DATA ---
   (function seedDemo() {
     if (load().length > 0) return;
     save([
       { id:1, name:'Arjun Sharma', email:'arjun@gmail.com', property:'Modern Rooftop Studio, Bhubaneswar', country:'India', message:'Hi, I saw your email and I am very interested in the free sample video. When can you start?', time: new Date(Date.now()-7200000).toISOString(), read:false },
-      { id:2, name:'Arjun Sharma', email:'arjun@gmail.com', property:'Modern Rooftop Studio, Bhubaneswar', country:'India', message:'Also — can you show both the rooftop and bedroom in the sample?', time: new Date(Date.now()-3600000).toISOString(), read:false },
+      { id:2, name:'Arjun Sharma', email:'arjun@gmail.com', property:'Modern Rooftop Studio, Bhubaneswar', country:'India', message:'Also - can you show both the rooftop and bedroom in the sample?', time: new Date(Date.now()-3600000).toISOString(), read:false },
       { id:3, name:'Sarah Mitchell', email:'sarah@outlook.com', property:'Cosy Garden Flat, London', country:'United Kingdom', message:'Hello, I have 3 listings in London. Would you do a package deal for all three?', time: new Date(Date.now()-86400000).toISOString(), read:true }
     ]);
   })();
