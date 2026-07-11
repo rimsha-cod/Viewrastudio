@@ -330,6 +330,34 @@
     text-transform: uppercase;
   }
 
+  .dash-tabs {
+    display: flex;
+    gap: 0;
+    margin-bottom: 28px;
+    border: 1px solid var(--border);
+    background: var(--cream2);
+    max-width: 480px;
+  }
+
+  .tab-btn {
+    flex: 1;
+    padding: 12px;
+    border: none;
+    background: transparent;
+    font-size: 11px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    font-family: 'Arial', sans-serif;
+    color: var(--light);
+    text-transform: uppercase;
+    transition: all 0.2s;
+  }
+
+  .tab-btn.active {
+    background: var(--charcoal);
+    color: var(--white);
+  }
+
   .filters {
     display: flex;
     gap: 8px;
@@ -806,30 +834,62 @@
         </div>
       </div>
 
-      <div class="filters">
-        <button class="f-btn on" onclick="setFilter('all',this)">ALL</button>
-        <button class="f-btn" onclick="setFilter('unread',this)">UNREAD</button>
-        <button class="f-btn" onclick="setFilter('India',this)">INDIA</button>
-        <button class="f-btn" onclick="setFilter('United Arab Emirates',this)">DUBAI</button>
-        <button class="f-btn" onclick="setFilter('United Kingdom',this)">UK</button>
-        <button class="f-btn" onclick="setFilter('United States',this)">USA</button>
+      <div class="dash-tabs">
+        <button class="tab-btn active" onclick="switchDashTab('clients', this)">CLIENT INQUIRIES</button>
+        <button class="tab-btn" onclick="switchDashTab('iris', this)">IRIS CONVERSATIONS</button>
       </div>
 
-      <div class="detail-panel" id="detail-panel">
-        <div class="dp-head">
-          <div>
-            <h3 id="dp-name"></h3>
-            <p id="dp-prop"></p>
-          </div>
-          <button class="dp-close" onclick="closeDetail()">CLOSE</button>
+      <div id="tab-clients">
+        <div class="filters">
+          <button class="f-btn on" onclick="setFilter('all',this)">ALL</button>
+          <button class="f-btn" onclick="setFilter('unread',this)">UNREAD</button>
+          <button class="f-btn" onclick="setFilter('India',this)">INDIA</button>
+          <button class="f-btn" onclick="setFilter('United Arab Emirates',this)">DUBAI</button>
+          <button class="f-btn" onclick="setFilter('United Kingdom',this)">UK</button>
+          <button class="f-btn" onclick="setFilter('United States',this)">USA</button>
         </div>
-        <div id="dp-msgs"></div>
+
+        <div class="detail-panel" id="detail-panel">
+          <div class="dp-head">
+            <div>
+              <h3 id="dp-name"></h3>
+              <p id="dp-prop"></p>
+            </div>
+            <button class="dp-close" onclick="closeDetail()">CLOSE</button>
+          </div>
+          <div id="dp-msgs"></div>
+        </div>
+
+        <div class="clients-wrap" id="clients-wrap"></div>
+        <div class="empty" id="empty-state" style="display:none">
+          <h3>No inquiries yet</h3>
+          <p>Share your inquiry link with clients.<br>Every message will appear here, organised by client.</p>
+        </div>
       </div>
 
-      <div class="clients-wrap" id="clients-wrap"></div>
-      <div class="empty" id="empty-state" style="display:none">
-        <h3>No inquiries yet</h3>
-        <p>Share your inquiry link with clients.<br>Every message will appear here, organised by client.</p>
+      <div id="tab-iris" style="display:none">
+        <div class="filters">
+          <button class="f-btn on" onclick="setIrisFilter('all',this)">ALL</button>
+          <button class="f-btn" onclick="setIrisFilter('escalated',this)">ESCALATED</button>
+          <button class="f-btn" onclick="setIrisFilter('answered',this)">ANSWERED BY IRIS</button>
+        </div>
+
+        <div class="detail-panel" id="iris-detail-panel">
+          <div class="dp-head">
+            <div>
+              <h3 id="idp-title">Iris conversation</h3>
+              <p id="idp-sub"></p>
+            </div>
+            <button class="dp-close" onclick="closeIrisDetail()">CLOSE</button>
+          </div>
+          <div id="idp-msgs"></div>
+        </div>
+
+        <div class="clients-wrap" id="iris-sessions-wrap"></div>
+        <div class="empty" id="iris-empty-state" style="display:none">
+          <h3>No Iris conversations yet</h3>
+          <p>Every chat a visitor has with Iris will appear here - whether she answered it herself or escalated it to you.</p>
+        </div>
       </div>
 
     </div>
@@ -861,6 +921,27 @@
   const IRIS_STORAGE_KEY = 'viewra_v2_inquiries';
   const IRIS_ALERT_EMAIL = 'viewrastudio@gmail.com';
 
+  // --- Iris conversation history (every chat, not just escalated ones) ---
+  const IRIS_SESSIONS_KEY = 'viewra_v2_iris_sessions';
+  let currentIrisSessionId = null;
+
+  function loadIrisSessions() {
+    try { return JSON.parse(localStorage.getItem(IRIS_SESSIONS_KEY)) || []; }
+    catch(e) { return []; }
+  }
+
+  function saveIrisSessions(data) {
+    try { localStorage.setItem(IRIS_SESSIONS_KEY, JSON.stringify(data)); }
+    catch(e) {}
+  }
+
+  function startIrisSession() {
+    currentIrisSessionId = Date.now();
+    const sessions = loadIrisSessions();
+    sessions.push({ id: currentIrisSessionId, startTime: new Date().toISOString(), messages: [], escalated: false, email: null });
+    saveIrisSessions(sessions);
+  }
+
   const IRIS_FAQ = [
     { kw: ['price','pricing','cost','how much','rate','fee','budget'],
       a: "Here's our pricing - Free sample video to start. $150 Starter: 60 seconds, 3 rooms, one revision, 36-hour delivery. $300 Full: 90 seconds, 5 rooms, branded overlay in your fonts and colours, booking or WhatsApp CTA, three revisions, curated audio, 36-hour delivery. $75 per change after delivery. Want me to note your interest for the founder?" },
@@ -875,7 +956,19 @@
     { kw: ['call','zoom','meeting','phone','talk live'],
       a: "We work fully async - no calls or meetings needed. Everything is handled over email, on your own schedule." },
     { kw: ['contract','own','rights','ownership','payment terms','invoice'],
-      a: "We'll share full contract and payment details - including ownership terms - once you're ready to move forward with your paid video. Everything is handled over email - no calls needed." }
+      a: "We'll share full contract and payment details - including ownership terms - once you're ready to move forward with your paid video. Everything is handled over email - no calls needed." },
+    { kw: ['portfolio','example','examples','see your work','previous work','past work','see samples','work you have done'],
+      a: "We don't have a public portfolio link right now - but the free sample video we make specifically for your property is the best way to see our quality and style firsthand, rather than judging from someone else's space. Want to get started with that?" },
+    { kw: ['how do i pay','payment method','how to pay','pay you','pay for this'],
+      a: "Payment is handled securely through Wise. Once you're ready to move forward, we'll send you the payment link and details directly over email." },
+    { kw: ['what will this do for me','how will this help my business','how will this help me','what opportunities','more bookings','more clients','more inquiries','why do i need this','why should i do this','benefit of this',"what's the benefit","whats the benefit",'grow my business'],
+      a: "A professional walkthrough video gives your property a real edge - it builds trust with potential guests before they even message you, and a branded video is far more likely to get saved and shared than plain photos. It's often the difference between someone scrolling past and someone actually booking." },
+    { kw: ['what areas','which countries','where do you operate','do you work in','service area','which country','international clients','do you serve','do you cover'],
+      a: "We work with clients across India, the UAE, the UK, the US, Australia, Canada, and Singapore - fully async, so time zones and location never get in the way. If your country isn't listed, just mention it in your message and we'll take a look." },
+    { kw: ['what language','do you speak','language support','other languages','non-english','non english'],
+      a: "Everything is currently handled in English over email, since there are no calls involved - so you'll always have time to read and reply at your own pace." },
+    { kw: ['see a draft','see my draft','preview before','before i pay in full','see it before paying','draft before payment','see before final payment','see the video before'],
+      a: "Yes - payment is split into two parts. Your first payment unlocks Part 1 of your actual video, so you see the real result before paying the rest. The remaining payment then unlocks the final, complete file - you're never paying in full blind." }
   ];
 
   const IRIS_PERSONAL = ['are you a','male or female','your gender','are you real','are you human','are you a bot','are you ai','are you a robot','how old are you','where do you live','are you single','your age'];
@@ -921,6 +1014,7 @@
     panel.classList.toggle('open');
     if (panel.classList.contains('open') && !irisGreeted) {
       irisGreeted = true;
+      startIrisSession();
       irisReply("Hi, I'm Iris from Viewra Studio  - happy to answer anything about pricing, process, or timelines. What would you like to know?");
     }
   }
@@ -933,6 +1027,17 @@
     div.textContent = text;
     body.appendChild(div);
     body.scrollTop = body.scrollHeight;
+
+    // also record this message into the persistent Iris conversation
+    // history, so it shows up on the dashboard even if it never escalates
+    if (currentIrisSessionId) {
+      const sessions = loadIrisSessions();
+      const session = sessions.find(s => s.id === currentIrisSessionId);
+      if (session) {
+        session.messages.push({ who, text, time: new Date().toISOString() });
+        saveIrisSessions(sessions);
+      }
+    }
   }
 
   function irisSend() {
@@ -958,6 +1063,18 @@
     const isJustGreeting = greetings.some(g => strippedLower === g);
     if (isJustGreeting) {
       irisReply("Hi there! I'm happy to help with anything about pricing, the process, or delivery timelines for your walkthrough video. What would you like to know?");
+      return;
+    }
+
+    // gratitude / sign-off - "thank you", "okay thanks", "appreciate it" etc.
+    // should get a warm closing reply, NOT fall through to escalation.
+    // This is a genuine gap without it: right now saying "thanks" after
+    // getting an answer would otherwise trigger an email request, which
+    // feels robotic and pointless.
+    const gratitudePhrases = ['thank you','thanks','thankyou','thanks so much','thank you so much','okay thank you','ok thank you','okay thanks','ok thanks','alright thank you','alright thanks','appreciate it','appreciate that','great thanks','perfect thanks','got it thanks','noted thanks','cool thanks','sounds good thanks'];
+    const isGratitude = gratitudePhrases.some(g => strippedLower === g);
+    if (isGratitude) {
+      irisReply("You're so welcome! If anything else comes up - pricing, process, or timing - I'm right here.");
       return;
     }
 
@@ -1025,9 +1142,17 @@
         return;
       }
 
-      // No @ symbol at all means this was never an attempt at an email -
-      // it's just normal conversation ("okay", "sure", "so I have to give
-      // you my email?" etc). Don't accuse them of an invalid email for that.
+      // No @ symbol at all means this was never an attempt at an email.
+      // If they're specifically asking about the email step itself
+      // ("do I need to send my email", "should I just type it here") -
+      // give them a direct yes, rather than the generic nudge below.
+      if (lower.includes('email')) {
+        irisReply("Yes exactly - just type your email address here and hit send, and I'll make sure it reaches the founder.");
+        return;
+      }
+
+      // Otherwise it's just normal conversation ("okay", "sure", etc).
+      // Don't accuse them of an invalid email for that.
       if (!lower.includes('@')) {
         irisReply("Whenever you're ready, just drop your email here and I'll pass your question straight to the founder.");
         return;
@@ -1055,6 +1180,18 @@
       });
       localStorage.setItem(IRIS_STORAGE_KEY, JSON.stringify(data));
     } catch(e) {}
+
+    // mark this Iris session as escalated, so it's labeled correctly in
+    // the dashboard's Iris Conversations history
+    if (currentIrisSessionId) {
+      const sessions = loadIrisSessions();
+      const session = sessions.find(s => s.id === currentIrisSessionId);
+      if (session) {
+        session.escalated = true;
+        session.email = email;
+        saveIrisSessions(sessions);
+      }
+    }
 
     // email alert (requires one-time confirmation click from formsubmit.co on first use)
     try {
@@ -1310,6 +1447,94 @@
   function closeDetail() {
     selectedKey = null;
     document.getElementById('detail-panel').classList.remove('open');
+  }
+
+  // --- DASHBOARD TABS ---
+  function switchDashTab(tab, btn) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('tab-clients').style.display = tab === 'clients' ? 'block' : 'none';
+    document.getElementById('tab-iris').style.display = tab === 'iris' ? 'block' : 'none';
+    if (tab === 'iris') renderIrisConversations();
+  }
+
+  // --- IRIS CONVERSATION HISTORY ---
+  let activeIrisFilter = 'all';
+  let selectedIrisSessionId = null;
+
+  function setIrisFilter(f, btn) {
+    activeIrisFilter = f;
+    document.querySelectorAll('#tab-iris .f-btn').forEach(b => b.classList.remove('on'));
+    btn.classList.add('on');
+    closeIrisDetail();
+    renderIrisConversations();
+  }
+
+  function renderIrisConversations() {
+    const sessions = loadIrisSessions().slice().sort((a,b) => new Date(b.startTime) - new Date(a.startTime));
+
+    let list = sessions;
+    if (activeIrisFilter === 'escalated') list = sessions.filter(s => s.escalated);
+    else if (activeIrisFilter === 'answered') list = sessions.filter(s => !s.escalated);
+
+    const wrap  = document.getElementById('iris-sessions-wrap');
+    const empty = document.getElementById('iris-empty-state');
+
+    if (list.length === 0) {
+      wrap.style.display  = 'none';
+      empty.style.display = 'block';
+      return;
+    }
+
+    wrap.style.display  = 'grid';
+    empty.style.display = 'none';
+
+    wrap.innerHTML = list.map(s => {
+      const firstUserMsg = (s.messages.find(m => m.who === 'user') || {}).text || '(visitor sent no message)';
+      const preview = firstUserMsg.length > 60 ? firstUserMsg.slice(0, 60) + '...' : firstUserMsg;
+      return `
+        <div class="client-card ${selectedIrisSessionId === s.id ? 'sel' : ''}" data-session-id="${s.id}">
+          <div class="cc-left">
+            <h3>${esc(preview)}</h3>
+            <p>${s.messages.length} message${s.messages.length !== 1 ? 's' : ''}${s.email ? ' &middot; ' + esc(s.email) : ' . anonymous visitor'}</p>
+          </div>
+          <div class="cc-right">
+            <span class="badge ${s.escalated ? 'escalated' : 'read'}">${s.escalated ? 'ESCALATED' : 'ANSWERED BY IRIS'}</span>
+            <div class="cc-time">${fmtTime(s.startTime)}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    wrap.querySelectorAll('.client-card').forEach(card => {
+      card.addEventListener('click', () => openIrisSession(Number(card.getAttribute('data-session-id'))));
+    });
+  }
+
+  function openIrisSession(id) {
+    selectedIrisSessionId = id;
+    const sessions = loadIrisSessions();
+    const session = sessions.find(s => s.id === id);
+    if (!session) return;
+
+    document.getElementById('idp-sub').textContent = fmtTime(session.startTime) + (session.email ? ' . ' + session.email : ' . anonymous visitor');
+    document.getElementById('idp-msgs').innerHTML = session.messages.map(m => `
+      <div class="msg-item">
+        <div class="msg-top">
+          <span class="msg-country">${m.who === 'bot' ? 'IRIS' : 'VISITOR'}</span>
+          <span class="msg-time">${fmtTime(m.time)}</span>
+        </div>
+        <div class="msg-text">${esc(m.text)}</div>
+      </div>
+    `).join('');
+
+    document.getElementById('iris-detail-panel').classList.add('open');
+    renderIrisConversations();
+  }
+
+  function closeIrisDetail() {
+    selectedIrisSessionId = null;
+    document.getElementById('iris-detail-panel').classList.remove('open');
   }
 
   function fmtTime(iso) {
