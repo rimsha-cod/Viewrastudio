@@ -865,7 +865,10 @@
       a: "The $300 package includes three revisions. Additional changes after delivery are $75 each." },
     { kw: ['call','zoom','meeting','phone','talk live'],
       a: "We work fully async — no calls or meetings needed. Everything is handled over email, on your own schedule." },
-    { kw: ['contract','own','rights','ownership','payment terms','invoice'],
+    { kw: ['get started','how do i begin','how to start','ready to begin','want to start','move forward'],
+      a: "Wonderful — getting started is simple. Just fill in the inquiry form on this page with your name, email, and a little about your space. Or reply yes to any email from Rimsha and she'll send you everything you need. No calls, no meetings — everything handled over email." },
+    { kw: ['what is included','what do i get','what comes with','whats included','included in'],
+      a: "Great question! The $300 Full package includes: 90 seconds of cinematic footage, 5 rooms showcased, branded overlay in your fonts and colours, a booking or WhatsApp CTA in the final frame, curated audio, 3 rounds of revisions, and delivery in 36 hours. The $150 Starter includes 60 seconds, 3 rooms, basic overlay, 1 revision, and 36-hour delivery." },
       a: "We'll share full contract and payment details — including ownership terms — once you're ready to move forward with your paid video. Everything is handled over email — no calls needed." }
   ];
 
@@ -910,7 +913,25 @@
 
     const lower = text.toLowerCase();
 
-    // "why" objection about pricing — check before generic FAQ matching
+    // greeting handler
+    const greetings = ['hello','hi','hey','good morning','good afternoon','good evening','salam','assalamu','hii','heyy'];
+    if (greetings.some(g => lower.trim() === g || lower.trim().startsWith(g + ' ') || lower.trim().startsWith(g + '!'))) {
+      irisAdd('bot', "Hello! So glad you're here 🦋 I'm happy to help with anything about your walkthrough video.");
+      setTimeout(() => {
+        irisAdd('bot', "Here's what I can help you with right now — just pick one or ask in your own words:\n\n💰 Pricing — what does a video cost?\n📦 What's included — what do I actually get?\n⏱ Timeline — how fast is delivery?\n🔄 Revisions — can I make changes?\n📋 Process — how does it all work?\n📩 Get started — how do I begin?");
+      }, 900);
+      return;
+    }
+
+    // gratitude and acknowledgement handler
+    const gratitude = ['thank you','thanks','thank u','thankyou','appreciate it','appreciated','okay','ok','sure','got it','understood','makes sense','perfect','great','awesome','sounds good','noted','alright'];
+    if (gratitude.some(g => lower.trim() === g || lower.trim().startsWith(g + ' ') || lower.trim().startsWith(g + '!') || lower.trim().startsWith(g + '.'))) {
+      irisAdd('bot', "You're so welcome 🦋");
+      setTimeout(() => {
+        irisAdd('bot', "Is there anything else I can help you with? I can answer questions about pricing, what's included, timelines, revisions, or how to get started.");
+      }, 800);
+      return;
+    }
     const asksWhy = lower.includes('why') || lower.includes('justify') || lower.includes('worth it') || lower.includes('expensive');
     const mentionsPrice = lower.includes('pric') || lower.includes('cost') || lower.includes('rate') || lower.includes('fee');
     if (asksWhy && mentionsPrice) {
